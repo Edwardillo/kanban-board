@@ -14,27 +14,27 @@ const defaultValues = {
   dueDate: '',
 }
 
-export default function FormModal(props) {
+export default function FormModal({data, onCancel, onOk}) {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(props.data) {
+    if(data) {
       setLoading(true)
       setTimeout(() => setLoading(false), 5000);
     }
   }, [])
 
   const formik = useFormik({
-    initialValues: props.data || defaultValues,
+    initialValues: data || defaultValues,
     onSubmit: values => {
-      props.onOk(values, !props.data)
+      onOk(values, !data)
     },
   });
 
   return (
     <Modal
       title={formik.initialValues.title || "New Issue"}
-      onCancel={props.onCancel}
+      onCancel={onCancel}
       onOk={formik.handleSubmit}
       visible
       destroyOnClose

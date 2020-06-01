@@ -3,15 +3,11 @@ import { Input } from 'antd';
 
 const { Search } = Input;
 
-export default function Filter(props) {
-  const handleChange = (e) => {
-    props.handleChange(e.currentTarget.value)
-  }
-
+export default function Filter({handleChange}) {
   return(
     <Search
       placeholder="input search text"
-      onChange={handleChange}
+      onChange={(e) => handleChange(e.currentTarget.value)}
     />
   )
 }

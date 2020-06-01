@@ -24,9 +24,25 @@ const initColumns = [{
 
 export function Board() {
   const [columns, setColumns] = useState(initColumns);
-  const [items, setItems] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [data, setData] = useState(null);
+  const [items, setItems] = useState();
+  const [isModalVisible, setModalVisible] = useState();
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    const items = getItems();
+    const newColumns = columns.map(columnn => ({...columnn, items: items[columnn.id]}));
+
+    setColumns(newColumns);
+    setItems(items);
+  }, []);
+
+  const sendSaveRequest = (newItems) => {
+    const response = saveItems(newItems);
+    const newColumns = columns.map(columnn => ({...columnn, items: response[columnn.id]}));
+  
+    setColumns(newColumns)
+    setItems(response);
+  }
 
   const showModal = () => {
     setModalVisible(true);
@@ -37,18 +53,9 @@ export function Board() {
     setModalVisible(true);
   }
 
-  const sendSaveRequest = (newItems) => {
-    const response = saveItems(newItems);
-
-    const newColumns = columns.map(columnn => ({...columnn, items: response[columnn.id]}));
-    
-    setItems(response);
-    setColumns(newColumns);
-  }
-
   const handleModalOk = (item, isNewIssue) => {
-    let newItems = items;
-    const status = item.status;
+    let newItems = {...items};
+    const {status} = item;
 
     if(isNewIssue) {
       newItems[status].push(item);
@@ -62,8 +69,8 @@ export function Board() {
   };
 
   const onClickDelete = (item) => {
-    let newItems = items;
-    const status = item.status;
+    let newItems = {...items};;
+    const {status} = item;
 
     newItems[status] = newItems[status].filter(element => element.id !== item.id);
         
@@ -76,8 +83,8 @@ export function Board() {
   }
 
   const updateStatus = (newStatus, item) => {
-    let newItems = items;
-    const oldStatus = item.status;
+    let newItems = {...items};
+    const {status: oldStatus} = item;
 
     newItems[oldStatus] = newItems[oldStatus].filter(element => element.id !== item.id)
 
@@ -94,11 +101,6 @@ export function Board() {
 
     setColumns(newColumns);
   }
-
-  useEffect(() => {
-      const items = getItems();
-      sendSaveRequest(items);
-  }, [])
 
   return (
     <React.Fragment>

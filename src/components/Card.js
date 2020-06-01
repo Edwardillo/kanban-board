@@ -4,29 +4,20 @@ import { useDrag } from 'react-dnd';
 import {Popconfirm} from 'antd'
 import {ItemTypes} from '../constants'
 
-export default function Card (props) {
+export default function Card ({item, onClick, onClickDelete}) {
   const [, drag] = useDrag({
     item: {
       type: ItemTypes.CARD,
-      card: {...props.item}
+      card: {...item}
       }
   });
 
-  const onClick = () => {
-    props.onClick(props.item)
-  }
-
-  const onClickDelete = () => {
-    props.onClickDelete(props.item)
-  }
-
-  const {title, description, tag, assignee, dueDate} = props.item;
+  const {title, description, tag, assignee, dueDate} = item;
 
   return(
     <div 
       ref={drag} 
-      id={props.id} 
-      onClick={onClick}
+      onClick={onClick(item)}
       css={css`
         background: #fff;
         margin: 0 10px;
@@ -52,13 +43,13 @@ export default function Card (props) {
               cursor: pointer;
             }
           `}
-            onClick={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           >
             <Popconfirm
               title="Are you sure delete this issue?"
               okText="Yes"
               cancelText="No"
-              onConfirm={onClickDelete}
+              onConfirm={() => onClickDelete(item)}
             >
             <div>X</div>
             </Popconfirm>
